@@ -3,7 +3,10 @@ from kivy.properties import NumericProperty, StringProperty, DictProperty
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
+from kivymd.uix.card import MDCard
+
 from database_ft import DatabaseFetch as DF
+from bus_stop import BusStop as BS
 from wearth import Weather as WE
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -16,6 +19,11 @@ Clock.max_iteration = 250
 
 if utils.platform != 'android':
     Window.size = (412, 732)
+
+
+class RowCard(MDCard):
+    icon = StringProperty("")
+    name = StringProperty("")
 
 
 class MainApp(MDApp):
@@ -50,6 +58,33 @@ class MainApp(MDApp):
         let1, let2 = self.weather[0], self.weather[1]
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
+
+    def add_item(self):
+        names = BS.name_stop
+        for i in names:
+            self.root.ids.customers.data.append(
+                {
+                    "viewclass": "RowCard",
+                    "icon": "google-maps",
+                    "name": i,
+                    "id": i
+                }
+            )
+
+    def bus_station(self):
+        loc = BS.get_loc(BS(), self.location_name_from.lower())
+        cor = BS.cord_stop
+        station_name = BS.name_stop
+
+        map = self.root.ids.map
+
+        for i in cor:
+            print(i)
+            lat, lon = i.strip().split(",")
+            map.add_widget(MapMarker(lat=lat, lon=lon))
+            map.center_on(float(lat), float(lon))
+            self.zoom = 10
+        self.add_item()
 
     def location(self):
         import geocoder

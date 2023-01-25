@@ -188,6 +188,7 @@ ScreenManager:
             orientation:"vertical"
             MDBoxLayout:
                 MapView:
+                    id:map
                     #pos_hint:{"center_x":.5, "center_y":.5}
                     lat: app.lat
                     lon: app.lon
@@ -197,11 +198,32 @@ ScreenManager:
                         lon: app.lon
             FloatLayout:
                 orientation:"vertical"
-                MDLabel:
-                    text:"Your location"
-                    halign:"center"
-                    pos_hint:{"center_x":.5, "center_y":.9}
-
+                DataContainer:
+                    Details:
+                        height:wali.height
+                        orientation:"vertical"
+                        RecycleView:
+                            id: customers
+                            key_viewclass: 'viewclass'
+                            key_size: 'height'
+                            pos_hint:{"center_x":.5,"center_y":.5}
+                            RecycleBoxLayout:
+                                id:wali
+                                spacing:dp(1)
+                                padding: dp(10)
+                                default_size: None, dp(55)
+                                default_size_hint: 1, None
+                                size_hint_y: None
+                                height: self.minimum_height
+                                orientation: 'vertical'
+                MDRaisedButton:
+                    text: "View all in the map"
+                    pos_hint:{'center_x': .5, 'center_y': .1}
+                    font_size: "18sp"
+                    font_name: 'components/fonts/Gill Sans.otf'
+                    md_bg_color: 36/255, 146/255, 255/255, 1
+                    on_release:
+                        app.bus_station()
 
 
 
@@ -238,8 +260,17 @@ ScreenManager:
                 font_name:'components/fonts/Gill Sans Bold.otf'
                 theme_text_color: "Custom"
                 text_color: 1, 1, 1, 1
-
-
+<DataContainer@MDBoxLayout>:
+    size:dp(50),dp(50)
+    adaptive_height:True
+    orientation:"vertical"
+    pos_hint:{"top":.7}
+<Details@MDBoxLayout>:
+    radius:9
+    adaptive_height:True
+    md_bg_color:.1,.1,.2,.1
+    pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
 
 <Foods@MDCard>:
     orientation: "vertical"
@@ -254,7 +285,35 @@ ScreenManager:
     focus_behavior: False
     ripple_behavior: True
     elevation: 0.1
-
+<RowCard>:
+    #orientation: "vertical"
+    md_bg_color: 1, 1, 1, 1
+    pos_hint:{"center_x":.5,"center_y":.3}
+    padding: "10dp"
+    #spacing: "5dp"
+    border_radius: 3
+    border_color_a: .5
+    border_color_a: 1
+    adaptive_height:True
+    radius: [3]
+    size_hint: None, None
+    size: app.size_x/1.5, app.size_y/11
+    focus_behavior: False
+    ripple_color:.9, .9, .95, 1
+    ripple_behavior: True
+    FloatLayout:
+        MDIcon:
+            icon:root.icon
+            badge_icon:"cat"
+            font_size:"30sp"
+            theme_text_color:"Custom"
+            text_color: 1, .5, .5, 1
+            pos_hint:{"center_x":.5,"center_y":.5}
+        MDLabel:
+            text:root.name
+            font_size:"15sp"
+            #halign:"center"
+            pos_hint:{"center_x":.63,"center_y":.5}
 
 <Deco@MDCard>:
     orientation: "vertical"
