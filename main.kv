@@ -1,0 +1,270 @@
+#:import sm kivy.uix.screenmanager
+ScreenManager:
+    id:manager
+    transition:sm.FadeTransition(duration=.0)
+    MDScreen:
+        name:"home"
+        FloatLayout:
+            Deco:
+                md_bg_color:36/255, 146/255, 255/255, 1
+                pos_hint:{"center_x":.5,"center_y":1}
+            MDLabel:
+                text:"current location"
+                halign:"center"
+                font_style:"Caption"
+                pos_hint:{"center_x":.2, "center_y":.95}
+                #font_name:'components/fonts/Gill Sans.otf'
+
+            MDIcon:
+                halign:"center"
+                icon:"weather-sunny"
+                pos_hint:{"center_x":.8, "center_y":.93}
+
+            MDIcon:
+                halign:"center"
+                icon:"google-maps"
+                pos_hint:{"center_x":.1, "center_y":.89}
+            MDLabel:
+                text:app.location_name_from
+                halign:"center"
+                font_style:"H6"
+                pos_hint:{"center_x":.3, "center_y":.89}
+                font_name:'components/fonts/Gill Sans.otf'
+            MDIcon:
+                halign:"center"
+                icon:app.w_icon1
+                font_size:sp(50)
+                pos_hint:{"center_x":.8, "center_y":.89}
+            MDIcon:
+                halign:"center"
+                icon:app.w_icon2
+                font_size:sp(50)
+                pos_hint:{"center_x":.84, "center_y":.89}
+            MDIcon:
+                halign:"center"
+                icon:"temperature-celsius"
+                pos_hint:{"center_x":.89, "center_y":.89}
+            Foods:
+                pos_hint:{"center_x":.25, "center_y":.65}
+                on_release:
+                    app.screen_capture("s_location")
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"Search for bus stops near me"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+
+            Foods:
+                pos_hint:{"center_x":.75, "center_y":.65}
+                on_release:
+                    app.screen_capture("bus_location")
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"Search for buses between two location"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+            Foods:
+                pos_hint:{"center_x":.25, "center_y":.40}
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"My location"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+            Foods:
+                pos_hint:{"center_x":.75, "center_y":.40}
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"Track bus by vehicle number"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+            Foods:
+                pos_hint:{"center_x":.25, "center_y":.15}
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"Emergency!"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+            Foods:
+                pos_hint:{"center_x":.75, "center_y":.15}
+                Image:
+                    source:"components/icons/lock.png"
+                    size_hint:None, None
+                    pos_hint:{"center_x":.5, "center_y":.5}
+                    size:120, 120
+
+                MDLabel:
+                    text:"My favourite"
+                    halign:"center"
+                    font_name:'components/fonts/Gill Sans.otf'
+
+
+    MDScreen:
+        name:"s_location"
+        FloatLayout:
+            MDLabel:
+                text:"Bus Stops near you"
+                halign:"center"
+                pos_hint:{"center_x":.2, "center_y":.95}
+
+            MDRaisedButton:
+                text: "View all in the map"
+                pos_hint:{'center_x': .5, 'center_y': .1}
+                font_size: "18sp"
+                font_name: 'components/fonts/Gill Sans.otf'
+                md_bg_color: 36/255, 146/255, 255/255, 1
+                on_release:
+                    manager.current = "map"
+    MDScreen:
+        name:"bus_location"
+        FloatLayout:
+            MDLabel:
+                text:"Search Buses"
+                halign:"center"
+                font_style:"H6"
+                pos_hint:{"center_x":.2, "center_y":.95}
+                font_name: 'components/fonts/Gill Sans.otf'
+
+            MDLabel:
+                text:"From:"
+                halign:"center"
+                pos_hint:{"center_x":.2, "center_y":.85}
+
+            MDDropDownItem:
+                md_bg_color:36/255, 146/255, 255/255, 1
+                pos_hint: {'center_x': .5, 'center_y': .85}
+                text: app.location_name_from
+
+            MDDropDownItem:
+                md_bg_color:36/255, 146/255, 255/255, 1
+                pos_hint: {'center_x': .5, 'center_y': .78}
+                text: app.location_name_to
+                on_release:
+                    app.category_sheet(app.regions, "to")
+
+            MDLabel:
+                text:"To:"
+                halign:"center"
+                pos_hint:{"center_x":.2, "center_y":.78}
+
+            MDRaisedButton:
+                text: "View all in the map"
+                pos_hint:{'center_x': .5, 'center_y': .1}
+                font_size: "18sp"
+                font_name: 'components/fonts/Gill Sans.otf'
+                md_bg_color: 36/255, 146/255, 255/255, 1
+
+            MDSeparator:
+                pos_hint:{"center_x":.5, "center_y":.72}
+
+
+    MDScreen:
+        name:"map"
+        MDBoxLayout:
+            orientation:"vertical"
+            MDBoxLayout:
+                MapView:
+                    #pos_hint:{"center_x":.5, "center_y":.5}
+                    lat: app.lat
+                    lon: app.lon
+                    zoom: app.zoom
+                    MapMarker:
+                        lat: app.lat
+                        lon: app.lon
+            FloatLayout:
+                orientation:"vertical"
+                MDLabel:
+                    text:"Your location"
+                    halign:"center"
+                    pos_hint:{"center_x":.5, "center_y":.9}
+
+
+
+
+    MDScreen:
+        name:"genesis"
+        radius: [25, 25, 25, 25]
+        md_bg_color:36/255, 146/255, 255/255, 1
+        MDBoxLayout:
+            orientation:'vertical'
+            MDLabel:
+                text:'LOCATOR'
+                halign:'center'
+                bold:True
+                size_hint:None, None
+                font_style:'H3'
+                size_hint:1, 5
+                font_name:'components/fonts/Gill Sans Bold.otf'
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+            MDSpinner:
+                id:spine
+                size_hint: None, None
+                size: dp(50), dp(50)
+                pos_hint: {'center_x': .5, 'center_y': 1}
+                active: True
+                color: 1,1,1,1
+            MDLabel:
+                text:'Welcome!'
+                halign:'center'
+                bold:True
+                size_hint:None, None
+                font_style:'H6'
+                size_hint:1, 5
+                font_name:'components/fonts/Gill Sans Bold.otf'
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+
+
+<Foods@MDCard>:
+    orientation: "vertical"
+    md_bg_color: 1, 1, 1, 1
+    padding: "10dp"
+    #spacing: "5dp"
+    border_radius: 20
+    border_color_a: 0
+    radius: [15]
+    size_hint: None, None
+    size: app.size_x/2.2, app.size_y/4.5
+    focus_behavior: False
+    ripple_behavior: True
+    elevation: 0.1
+
+
+<Deco@MDCard>:
+    orientation: "vertical"
+    md_bg_color: 1, 1, 1, 1
+    padding: "10dp"
+    #spacing: "5dp"
+    border_radius: 3
+    border_color_a: .5
+    radius: [9]
+    size_hint: None, None
+    size: app.size_x/1, app.size_y/2.5
+    focus_behavior: False
+    ripple_behavior: False
