@@ -57,19 +57,14 @@ class MainApp(MDApp):
         print(g.latlng)
 
         self.lat, self.lon = g.latlng
-        # import module
         from geopy.geocoders import Nominatim
 
-        # initialize Nominatim API
         geolocator = Nominatim(user_agent="geoapiExercises")
-
-        # Latitude & Longitude input
 
         location = geolocator.reverse(str(self.lat) + "," + str(self.lon))
 
         address = location.raw['address']
 
-        # traverse the data
         city = address.get('city', '')
         state = address.get('state', '')
         country = address.get('country', '')
