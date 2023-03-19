@@ -1,9 +1,12 @@
 from kivy.core.window.window_x11 import EventLoop
 from kivy.properties import NumericProperty, StringProperty, DictProperty
+from kivy.uix.button import Button
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
+from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
+from kivymd.uix.label import MDLabel
 
 from database_ft import DatabaseFetch as DF
 from bus_stop import BusStop as BS
@@ -11,7 +14,7 @@ from wearth import Weather as WE
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy import utils
-from kivy_garden.mapview import MapView, MapMarker
+from kivy_garden.mapview import MapView, MapMarker, MapMarkerPopup
 
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
 Window.softinput_mode = "below_target"
@@ -28,6 +31,7 @@ class RowCard(MDCard):
 
 class MainApp(MDApp):
     size_x, size_y = Window.size
+    counter_bus_stop = 0
 
     # screen
     screens = ['home']
@@ -61,30 +65,44 @@ class MainApp(MDApp):
 
     def add_item(self):
         names = BS.name_stop
+        cor = BS.cord_stop
         for i in names:
+            pos = names.index(i)
             self.root.ids.customers.data.append(
                 {
                     "viewclass": "RowCard",
                     "icon": "google-maps",
                     "name": i,
-                    "id": i
+                    "id": cor[pos]
+                }
+            )
+            self.root.ids.customer.data.append(
+                {
+                    "viewclass": "RowCard",
+                    "icon": "google-maps",
+                    "name": i,
+                    "id": cor[pos]
                 }
             )
 
     def bus_station(self):
-        loc = BS.get_loc(BS(), self.location_name_from.lower())
-        cor = BS.cord_stop
-        station_name = BS.name_stop
+        if self.counter_bus_stop == 0:
+            loc = BS.get_loc(BS(), self.location_name_from.lower())
+            cor = BS.cord_stop
+            station_name = BS.name_stop
 
-        map = self.root.ids.map
+            map = self.root.ids.map
 
-        for i in cor:
-            print(i)
-            lat, lon = i.strip().split(",")
-            map.add_widget(MapMarker(lat=lat, lon=lon))
-            map.center_on(float(lat), float(lon))
-            self.zoom = 10
-        self.add_item()
+            for i in cor:
+                pos = cor.index(i)
+                lat, lon = i.strip().split(",")
+                mark = MapMarkerPopup(lat=lat, lon=lon)
+                mark.add_widget(MDRaisedButton(text=station_name[pos]))
+                map.add_widget(mark)
+                map.center_on(float(lat), float(lon))
+                self.zoom = 10
+            self.add_item()
+            self.counter_bus_stop = 1
 
     def location(self):
         import geocoder
@@ -153,6 +171,8 @@ class MainApp(MDApp):
         self.data_name = y
         self.data_icon = z
 
+        print("hello")
+
         if var == "to":
             self.location_name_to = y
         else:
@@ -172,6 +192,13 @@ class MainApp(MDApp):
 
         bottom_sheet_menu.radius_from = 'top'
         bottom_sheet_menu.open()
+
+    def bus_stop_specific(self, data):
+        map = self.root.ids.map
+        lat, lon = data.strip().split(",")
+        map.add_widget(MapMarker(lat=lat, lon=lon))
+        map.center_on(float(lat), float(lon))
+
 
     def build(self):
         pass
