@@ -1,20 +1,21 @@
 from kivy.core.window.window_x11 import EventLoop
 from kivy.properties import NumericProperty, StringProperty, DictProperty
-from kivy.uix.button import Button
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
-from kivymd.uix.label import MDLabel
 
+from beem import sms as SM
 from database_ft import DatabaseFetch as DF
 from bus_stop import BusStop as BS
 from wearth import Weather as WE
+from locations import Location as LC
+
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy import utils
-from kivy_garden.mapview import MapView, MapMarker, MapMarkerPopup
+from kivy_garden.mapview import MapMarker, MapMarkerPopup
 
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
 Window.softinput_mode = "below_target"
@@ -33,14 +34,22 @@ class MainApp(MDApp):
     size_x, size_y = Window.size
     counter_bus_stop = 0
 
+    # LOCATION
+    address = StringProperty("")
+    city = StringProperty("------------------")
+    region = StringProperty("------------------")
+    city_district = StringProperty("------------------")
+    sub_ward = StringProperty("------------------")
+    sub_urb = StringProperty("------------------")
+    road = StringProperty("------------------")
+
     # screen
     screens = ['home']
     screens_size = NumericProperty(len(screens) - 1)
     current = StringProperty(screens[len(screens) - 1])
 
     # Map
-    lat = NumericProperty(-6.8235)
-    lon = NumericProperty(39.2695)
+    lat, lon = NumericProperty(LC.my_loc(LC())[0]), NumericProperty(LC.my_loc(LC())[1])
     gppp = []
     zoom = NumericProperty(15)
     weather = StringProperty("")
@@ -54,14 +63,45 @@ class MainApp(MDApp):
 
     def on_start(self):
         self.keyboard_hooker()
-        self.location()
-        self.weath()
+        # self.location()
+        # self.weath()
+
+        """
+            KEYBOARD HOOKERS
+        
+        """
+
+    def keyboard_hooker(self):
+        EventLoop.window.bind(on_keyboard=self.hook_keyboard)
+
+    def hook_keyboard(self, window, key, *largs):
+        print(self.screens_size)
+        if key == 27 and self.screens_size > 0:
+            print(f"your were in {self.current}")
+            last_screens = self.current
+            self.screens.remove(last_screens)
+            print(self.screens)
+            self.screens_size = len(self.screens) - 1
+            self.current = self.screens[len(self.screens) - 1]
+            self.screen_capture(self.current)
+            return True
+        elif key == 27 and self.screens_size == 0:
+            toast('Press Home button!')
+            return True
+
+        """
+            WEATHER FUNCTIONS
+        """
 
     def weath(self):
         self.weather = WE.current_wth(WE(), self.location_name_from)[0]
         let1, let2 = self.weather[0], self.weather[1]
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
+
+        """
+        BUS STATION LOCATION
+        """
 
     def add_item(self):
         names = BS.name_stop
@@ -126,46 +166,6 @@ class MainApp(MDApp):
 
         self.location_name_from = city
 
-    def keyboard_hooker(self):
-        EventLoop.window.bind(on_keyboard=self.hook_keyboard)
-
-    def hook_keyboard(self, window, key, *largs):
-        print(self.screens_size)
-        if key == 27 and self.screens_size > 0:
-            print(f"your were in {self.current}")
-            last_screens = self.current
-            self.screens.remove(last_screens)
-            print(self.screens)
-            self.screens_size = len(self.screens) - 1
-            self.current = self.screens[len(self.screens) - 1]
-            self.screen_capture(self.current)
-            return True
-        elif key == 27 and self.screens_size == 0:
-            toast('Press Home button!')
-            return True
-
-    def screen_capture(self, screen):
-        sm = self.root
-        sm.current = screen
-        if screen in self.screens:
-            pass
-        else:
-            self.screens.append(screen)
-        print(self.screens)
-        self.screens_size = len(self.screens) - 1
-        self.current = self.screens[len(self.screens) - 1]
-        print(f'size {self.screens_size}')
-        print(f'current screen {screen}')
-
-    def screen_leave(self):
-        print(f"your were in {self.current}")
-        last_screens = self.current
-        self.screens.remove(last_screens)
-        print(self.screens)
-        self.screens_size = len(self.screens) - 1
-        self.current = self.screens[len(self.screens) - 1]
-        self.screen_capture(self.current)
-
     def callback_for_menu_items(self, y, z, var):
         toast(y)
         self.data_name = y
@@ -199,6 +199,58 @@ class MainApp(MDApp):
         map.add_widget(MapMarker(lat=lat, lon=lon))
         map.center_on(float(lat), float(lon))
 
+    """
+            MY LOCATION FUNCTIONS
+    """
+
+    def fetch_location(self):
+
+        LC.save_data(LC())
+        self.city = LC.get_spec_add(LC(), "city")
+
+        self.region = LC.get_spec_add(LC(), "region")
+
+        self.city_district = LC.get_spec_add(LC(), "city_district")
+
+        self.sub_ward = LC.get_spec_add(LC(), "subward")
+
+        self.sub_urb = LC.get_spec_add(LC(), "suburb")
+
+        self.road = LC.get_spec_add(LC(), "road")
+
+        self.address = LC.get_address(LC())["display_name"]
+
+    def send_txt(self, phone, sms):
+
+        SM.send_sms(phone, sms)
+
+    """
+    
+        screen functions
+    
+    """
+
+    def screen_capture(self, screen):
+        sm = self.root
+        sm.current = screen
+        if screen in self.screens:
+            pass
+        else:
+            self.screens.append(screen)
+        print(self.screens)
+        self.screens_size = len(self.screens) - 1
+        self.current = self.screens[len(self.screens) - 1]
+        print(f'size {self.screens_size}')
+        print(f'current screen {screen}')
+
+    def screen_leave(self):
+        print(f"your were in {self.current}")
+        last_screens = self.current
+        self.screens.remove(last_screens)
+        print(self.screens)
+        self.screens_size = len(self.screens) - 1
+        self.current = self.screens[len(self.screens) - 1]
+        self.screen_capture(self.current)
 
     def build(self):
         pass

@@ -76,6 +76,8 @@ ScreenManager:
                     font_name:'components/fonts/Gill Sans.otf'
             Foods:
                 pos_hint:{"center_x":.25, "center_y":.40}
+                on_release:
+                    app.screen_capture("my_loc")
                 Image:
                     source:"components/icons/lock.png"
                     size_hint:None, None
@@ -262,6 +264,228 @@ ScreenManager:
                         on_release:
                             app.zoom = app.zoom - 2
 
+    MDScreen:
+        name:"my_loc"
+        FloatLayout:
+            MDIconButton:
+                icon:"crosshairs-gps"
+                pos_hint:{"center_x":.5,"center_y":.9}
+                user_font_size:"55sp"
+                theme_text_color: "Custom"
+                md_bg_color:.35, .35, .35, 1
+                text_color: 36/255, 146/255, 255/255, 1
+                on_release:
+                    app.fetch_location()
+            MDLabel:
+                font_style:"Caption"
+                text:"My Location"
+                halign:"center"
+                pos_hint:{"center_x":.5,"center_y":.83}
+                font_name: 'components/fonts/Gill Sans.otf'
+            Deco:
+                pos_hint:{"center_x":.5,"center_y":.5}
+                md_bg_color: .35, .35, .35, 1
+                elevation: 7
+                size: app.size_x/1.2, app.size_y/2.2
+            MDSeparator:
+                pos_hint:{"center_x":.45,"center_y":.5}
+                orientation:"vertical"
+                width:dp(1)
+                size_hint: None, .35
+                color:150/255, 111/255, 51/255, 1
+            MDLabel:
+                text:"City:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.18,"center_y":.67}
+            MDLabel:
+                text:"Region:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.2,"center_y":.6}
+            MDLabel:
+                text:"City-district:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.243,"center_y":.53}
+            MDLabel:
+                text:"Sub-ward:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.224,"center_y":.46}
+            MDLabel:
+                text:"Sub-urb:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.21,"center_y":.39}
+            MDLabel:
+                text:"Road:"
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.18,"center_y":.32}
+            MDLabel:
+                text:app.city
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.67}
+            MDLabel:
+                text:app.region
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.6}
+            MDLabel:
+                text:app.city_district
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.53}
+            MDLabel:
+                text:app.sub_ward
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.46}
+            MDLabel:
+                text:app.sub_urb
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.39}
+            MDLabel:
+                text:app.road
+                halign:"center"
+                font_size: "20sp"
+                theme_text_color: "Custom"
+                font_name: 'components/fonts/Gill Sans.otf'
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.7,"center_y":.32}
+            MDIconButton:
+                icon:"share"
+                pos_hint:{"center_x":.6,"center_y":.22}
+                user_font_size:"30sp"
+                md_bg_color: .35, .35, .35, 1
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                on_release:
+                    app.screen_capture("share")
+            MDIconButton:
+                icon:"map-marker-radius"
+                pos_hint:{"center_x":.4,"center_y":.22}
+                user_font_size:"30sp"
+                md_bg_color: .35, .35, .35, 1
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                on_release:
+                    app.screen_capture("map_loc")
+
+
+    MDScreen:
+        name:"share"
+        FloatLayout:
+            MDTextField:
+                id:username
+                mode: "rectangle"
+                #fill_color: 0, 0, 0, .4
+                size_hint: .6, .1
+                pos_hint:{'center_x':.5, 'center_y':.8}
+                hint_text:"Share, phone number"
+                #text_color: 1, 1, 1, 1
+                font_size: dp(25)
+            Deco:
+                pos_hint:{"center_x":.5,"center_y":.6}
+                md_bg_color: .35, .35, .35, 1
+                elevation: 7
+                size: app.size_x/1.2, app.size_y/7
+                MDLabel:
+                    text:app.address
+                    halign:"center"
+                    font_size: "20sp"
+                    theme_text_color: "Custom"
+                    font_name: 'components/fonts/Gill Sans.otf'
+                    text_color: 1, 1, 1, 1
+                    pos_hint:{"center_x":.5,"center_y":.5}
+
+            MDRaisedButton:
+                text: "Send"
+                pos_hint:{'center_x': .5, 'center_y': .45}
+                font_size: "18sp"
+                font_name: 'components/fonts/Gill Sans.otf'
+                md_bg_color: 36/255, 146/255, 255/255, 1
+                on_release:
+                    app.send_txt(username.text, app.address)
+
+
+
+    MDScreen:
+        name:"map_loc"
+        MDBoxLayout:
+            orientation:"vertical"
+            MDBoxLayout:
+                MapView:
+                    id:myap
+                    #pos_hint:{"center_x":.5, "center_y":.5}
+                    lat: app.lat
+                    lon: app.lon
+                    zoom: app.zoom
+                    MapMarkerPopup:
+                        source:"components/icons/user.png"
+                        lat: app.lat
+                        lon: app.lon
+                        MDRaisedButton:
+                            text:"My Location"
+            MDBoxLayout:
+                adaptive_height:True
+                md_bg_color:.1,.1,.2,.1
+                pos_hint:{"center_x":.5,"top":.8}
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.4,"center_y":.5}
+                    on_release:
+                        app.zoom = app.zoom + 2
+
+                MDLabel:
+                    text:"Zoom:"+str(app.zoom)
+                    font_name: 'components/fonts/Gill Sans.otf'
+                    font_size: "18sp"
+                    halign:"center"
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                MDIconButton:
+                    icon:"minus"
+                    pos_hint:{"center_x":.7,"center_y":.5}
+                    on_release:
+                        app.zoom = app.zoom - 2
+
+
 
 
     MDScreen:
@@ -297,6 +521,8 @@ ScreenManager:
                 font_name:'components/fonts/Gill Sans Bold.otf'
                 theme_text_color: "Custom"
                 text_color: 1, 1, 1, 1
+
+
 <DataContainer@MDBoxLayout>:
     size:dp(50),dp(50)
     adaptive_height:True
