@@ -25,7 +25,7 @@ ScreenManager:
                 icon:"google-maps"
                 pos_hint:{"center_x":.1, "center_y":.89}
             MDLabel:
-                text:app.location_name_from
+                text:app.city
                 halign:"center"
                 font_style:"H6"
                 pos_hint:{"center_x":.3, "center_y":.89}
@@ -102,6 +102,8 @@ ScreenManager:
                     font_name:'components/fonts/Gill Sans.otf'
             Foods:
                 pos_hint:{"center_x":.25, "center_y":.15}
+                on_release:
+                    app.screen_capture("gps")
                 Image:
                     source:"components/icons/lock.png"
                     size_hint:None, None
@@ -188,7 +190,7 @@ ScreenManager:
             MDDropDownItem:
                 md_bg_color:36/255, 146/255, 255/255, 1
                 pos_hint: {'center_x': .5, 'center_y': .85}
-                text: app.location_name_from
+                text: app.city
 
             MDDropDownItem:
                 md_bg_color:36/255, 146/255, 255/255, 1
@@ -224,9 +226,12 @@ ScreenManager:
                     lat: app.lat
                     lon: app.lon
                     zoom: app.zoom
-                    MapMarker:
+                    MapMarkerPopup:
+                        source:"components/icons/user.png"
                         lat: app.lat
                         lon: app.lon
+                        MDRaisedButton:
+                            text:"My Location"
             MDBoxLayout:
                 orientation:"vertical"
                 RecycleView:
@@ -484,6 +489,25 @@ ScreenManager:
                     pos_hint:{"center_x":.7,"center_y":.5}
                     on_release:
                         app.zoom = app.zoom - 2
+
+
+    MDScreen:
+        name:"gps"
+        MDBoxLayout:
+            orientation: 'vertical'
+            MDLabel:
+                text: app.gps_location
+            MDLabel:
+                text: app.gps_status
+            MDBoxLayout:
+                size_hint_y: None
+                height: '48dp'
+                padding: '4dp'
+                ToggleButton:
+                    text: 'Start' if self.state == 'normal' else 'Stop'
+                    on_state:
+                        app.start(1000, 0) if self.state == 'down' else \
+                        app.stop()
 
 
 

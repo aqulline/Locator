@@ -1,14 +1,17 @@
-from kivy.core.window.window_x11 import EventLoop
-from kivy.properties import NumericProperty, StringProperty, DictProperty
+from kivy.base import EventLoop
+from kivy.properties import NumericProperty, StringProperty, DictProperty, ListProperty
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
+from kivy.clock import mainthread
+from plyer import gps
+from kivy.utils import platform
 
 from beem import sms as SM
 from database_ft import DatabaseFetch as DF
-from bus_stop import BusStop as BS
+from bus_stop import GoogleBusStop as BS
 from wearth import Weather as WE
 from locations import Location as LC
 
@@ -16,6 +19,8 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy import utils
 from kivy_garden.mapview import MapMarker, MapMarkerPopup
+
+
 
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
 Window.softinput_mode = "below_target"
@@ -33,9 +38,10 @@ class RowCard(MDCard):
 class MainApp(MDApp):
     size_x, size_y = Window.size
     counter_bus_stop = 0
+    gps_location = StringProperty("")
+    gps_status = StringProperty("")
 
     # LOCATION
-    address = StringProperty("")
     city = StringProperty("------------------")
     region = StringProperty("------------------")
     city_district = StringProperty("------------------")
@@ -49,7 +55,7 @@ class MainApp(MDApp):
     current = StringProperty(screens[len(screens) - 1])
 
     # Map
-    lat, lon = NumericProperty(LC.my_loc(LC())[0]), NumericProperty(LC.my_loc(LC())[1])
+    lat, lon = NumericProperty(-6.8059668), NumericProperty(39.2243981)
     gppp = []
     zoom = NumericProperty(15)
     weather = StringProperty("")
@@ -58,13 +64,19 @@ class MainApp(MDApp):
     location_name_to = StringProperty("Select Location")
     location_name_from = StringProperty("")
 
+    # loc
+    cordinates = ListProperty([lat, lon])
+
+    address = StringProperty("")
+
     # database
     regions = DictProperty(DF.reg_list(DF()))
 
     def on_start(self):
         self.keyboard_hooker()
-        # self.location()
-        # self.weath()
+        self.gps_init()
+        self.location()
+        self.weath()
 
         """
             KEYBOARD HOOKERS
@@ -127,7 +139,8 @@ class MainApp(MDApp):
 
     def bus_station(self):
         if self.counter_bus_stop == 0:
-            loc = BS.get_loc(BS(), self.location_name_from.lower())
+            BS.GetBusStop(BS(), self.address)
+
             cor = BS.cord_stop
             station_name = BS.name_stop
 
@@ -145,26 +158,13 @@ class MainApp(MDApp):
             self.counter_bus_stop = 1
 
     def location(self):
-        import geocoder
-        g = geocoder.ip('me')
-        print(g.latlng)
-
-        self.lat, self.lon = g.latlng
         from geopy.geocoders import Nominatim
 
         geolocator = Nominatim(user_agent="geoapiExercises")
 
         location = geolocator.reverse(str(self.lat) + "," + str(self.lon))
 
-        address = location.raw['address']
-
-        city = address.get('city', '')
-        state = address.get('state', '')
-        country = address.get('country', '')
-        code = address.get('country_code')
-        zipcode = address.get('postcode')
-
-        self.location_name_from = city
+        self.fetch_location()
 
     def callback_for_menu_items(self, y, z, var):
         toast(y)
@@ -205,7 +205,8 @@ class MainApp(MDApp):
 
     def fetch_location(self):
 
-        LC.save_data(LC())
+        cordinates = [self.lat, self.lon]
+        LC.save_data(LC(), cordinates)
         self.city = LC.get_spec_add(LC(), "city")
 
         self.region = LC.get_spec_add(LC(), "region")
@@ -218,11 +219,14 @@ class MainApp(MDApp):
 
         self.road = LC.get_spec_add(LC(), "road")
 
-        self.address = LC.get_address(LC())["display_name"]
+        self.address = LC.get_address(LC(), cordinates)["display_name"]
 
     def send_txt(self, phone, sms):
 
-        SM.send_sms(phone, sms)
+        if SM.send_sms(phone, sms):
+            toast("send successful")
+        else:
+            toast("check number!")
 
     """
     
@@ -251,6 +255,66 @@ class MainApp(MDApp):
         self.screens_size = len(self.screens) - 1
         self.current = self.screens[len(self.screens) - 1]
         self.screen_capture(self.current)
+
+
+        """
+                                        GPS INTERPRETATION
+        
+        """
+
+    def request_android_permissions(self):
+        from android.permissions import request_permissions, Permission
+
+        def callback(permissions, results):
+            if all([res for res in results]):
+                print("callback. All permissions granted.")
+            else:
+                print("callback. Some permissions refused.")
+
+        request_permissions([Permission.ACCESS_COARSE_LOCATION,
+                             Permission.ACCESS_FINE_LOCATION], callback)
+
+    def gps_init(self):
+        try:
+            gps.configure(on_location=self.on_location,
+                          on_status=self.on_status)
+
+        except NotImplementedError:
+            import traceback
+            traceback.print_exc()
+            gps_status = 'GPS is not implemented for your platform'
+
+            return gps_status
+
+        if platform == "android":
+            print("gps.py: Android detected. Requesting permissions")
+            self.request_android_permissions()
+
+    def start(self, minTime, minDistance):
+        gps.start(minTime, minDistance)
+
+
+
+    def stop(self):
+        gps.stop()
+
+    @mainthread
+    def on_location(self, **kwargs):
+        self.gps_location = '\n'.join([
+            '{}={}'.format(k, v) for k, v in kwargs.items()])
+
+        self.lat = float(kwargs["lat"])
+        self.lon = float(kwargs["lon"])
+        self.location()
+        self.weath()
+
+
+
+    @mainthread
+    def on_status(self, stype, status):
+        self.gps_status = 'type={}\n{}'.format(stype, status)
+
+
 
     def build(self):
         pass
