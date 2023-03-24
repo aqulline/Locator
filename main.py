@@ -3,6 +3,7 @@ from kivy.properties import NumericProperty, StringProperty, DictProperty, ListP
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
+from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
 from kivy.clock import mainthread
@@ -14,13 +15,12 @@ from database_ft import DatabaseFetch as DF
 from bus_stop import GoogleBusStop as BS
 from wearth import Weather as WE
 from locations import Location as LC
+from bus_list import BusLists as BL
 
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy import utils
 from kivy_garden.mapview import MapMarker, MapMarkerPopup
-
-
 
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
 Window.softinput_mode = "below_target"
@@ -28,6 +28,14 @@ Clock.max_iteration = 250
 
 if utils.platform != 'android':
     Window.size = (412, 732)
+
+
+class BusInfo(MDBoxLayout):
+    name = StringProperty("")
+    route = StringProperty("")
+    lcn = StringProperty("")
+    price = StringProperty("")
+    seats = StringProperty("")
 
 
 class RowCard(MDCard):
@@ -74,14 +82,21 @@ class MainApp(MDApp):
 
     def on_start(self):
         self.keyboard_hooker()
-        self.gps_init()
-        self.location()
-        self.weath()
+        self.plat_check()
+
 
         """
             KEYBOARD HOOKERS
         
         """
+
+    def plat_check(self,):
+        if platform == "android":
+            self.gps_init()
+            self.start(1000, 0)
+        else:
+            self.location()
+            self.weath()
 
     def keyboard_hooker(self):
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
@@ -110,6 +125,8 @@ class MainApp(MDApp):
         let1, let2 = self.weather[0], self.weather[1]
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
+
+        self.stop()
 
         """
         BUS STATION LOCATION
@@ -229,6 +246,49 @@ class MainApp(MDApp):
             toast("check number!")
 
     """
+        BUS LIST FUNCTION
+    """
+
+    def get_list(self, city_name):
+        BL.get_bus_list(BL(), self.city, city_name)
+        print("pass")
+        self.add_bus()
+        print("done")
+
+    def add_bus(self):
+        names = BL.bus_names
+        print(names, "name")
+        routes = BL.routes
+        license = BL.license
+        price = BL.price
+        seats = BL.seats
+        self.root.ids.bus_data.data = {}
+        if not names:
+            self.root.ids.bus_data.data.append(
+                {
+                    "viewclass": "BusInfo",
+                    "name": "No Cars Yet!",
+                    "route": "",
+                    "lcn": "",
+                    "price": "",
+                    "seats": ""
+                }
+            )
+        else:
+            for i in names:
+                pos = names.index(i)
+                self.root.ids.bus_data.data.append(
+                    {
+                        "viewclass": "BusInfo",
+                        "name": i,
+                        "route": routes[pos],
+                        "lcn": license[pos],
+                        "price": price[pos],
+                        "seats": f"seats available {seats[pos]}"
+                    }
+                )
+
+    """
     
         screen functions
     
@@ -255,7 +315,6 @@ class MainApp(MDApp):
         self.screens_size = len(self.screens) - 1
         self.current = self.screens[len(self.screens) - 1]
         self.screen_capture(self.current)
-
 
         """
                                         GPS INTERPRETATION
@@ -293,8 +352,6 @@ class MainApp(MDApp):
     def start(self, minTime, minDistance):
         gps.start(minTime, minDistance)
 
-
-
     def stop(self):
         gps.stop()
 
@@ -308,13 +365,9 @@ class MainApp(MDApp):
         self.location()
         self.weath()
 
-
-
     @mainthread
     def on_status(self, stype, status):
         self.gps_status = 'type={}\n{}'.format(stype, status)
-
-
 
     def build(self):
         pass

@@ -19,9 +19,3 @@ class Location:
         return Location.data_adress["address"][name]
 
 
-cord = [-6.8059668, 39.2243981]
-Location.save_data(Location(), cord)
-
-x = Location.data_adress
-
-print(x)

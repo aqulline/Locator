@@ -103,7 +103,7 @@ ScreenManager:
             Foods:
                 pos_hint:{"center_x":.25, "center_y":.15}
                 on_release:
-                    app.screen_capture("gps")
+                    app.screen_capture("emergency")
                 Image:
                     source:"components/icons/lock.png"
                     size_hint:None, None
@@ -204,12 +204,30 @@ ScreenManager:
                 halign:"center"
                 pos_hint:{"center_x":.2, "center_y":.78}
 
+            RecycleView:
+                id: bus_data
+                key_viewclass: 'viewclass'
+                key_size: 'height'
+                pos_hint:{"center_x":.5,"center_y":.5}
+                pos_hint:{"top":.7}
+                RecycleBoxLayout:
+                    spacing:dp(10)
+                    padding: dp(10)
+                    default_size: None, dp(200)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    adaptive_height:True
+                    orientation: 'vertical'
+
             MDRaisedButton:
                 text: "Search Bus"
                 pos_hint:{'center_x': .5, 'center_y': .1}
                 font_size: "18sp"
                 font_name: 'components/fonts/Gill Sans.otf'
                 md_bg_color: 36/255, 146/255, 255/255, 1
+                on_release:
+                    app.get_list(app.location_name_to)
 
             MDSeparator:
                 pos_hint:{"center_x":.5, "center_y":.72}
@@ -618,3 +636,52 @@ ScreenManager:
     size: app.size_x/1, app.size_y/2.5
     focus_behavior: False
     ripple_behavior: False
+
+<BusInfo>:
+    radius:9
+    adaptive_height:True
+    height:dp(200)
+    md_bg_color:214/255, 223/255, 232/255, 1
+    pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
+    FloatLayout:
+        MDLabel:
+            text:root.name
+            halign:"center"
+            font_size:"20sp"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":.2,"center_y":.8}
+        MDLabel:
+            text:root.route
+            halign:"center"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255, 1
+            pos_hint:{"center_x":.4,"center_y":.6}
+        MDLabel:
+            text:root.lcn
+            halign:"center"
+            theme_text_color: "Custom"
+            text_color:70/255, 69/255, 79/255, 1
+            pos_hint:{"center_x":.25,"center_y":.4}
+        MDLabel:
+            text:root.price
+            halign:"center"
+            theme_text_color: "Custom"
+            text_color:235/255, 115/255, 115/255, 1
+            pos_hint:{"center_x":.8,"center_y":.18}
+        MDLabel:
+            text:root.seats
+            halign:"center"
+            theme_text_color: "Custom"
+            text_color:70/255, 69/255, 79/255, 1
+            font_size:"15sp"
+            theme_text_color: "Custom"
+            pos_hint:{"center_x":.8,"center_y":.4}
+        MDRaisedButton:
+            text: "View Details"
+            size_hint: .3, .2
+            elevation:9
+            #font_size: "29sp"
+            pos_hint:{'center_x':.2, 'center_y':.19}
+            md_bg_color: 26/255, 54/255, 113/255, 1

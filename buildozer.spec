@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, kivy_garden.mapview, beem-africa, pyjnius, phonenumbers, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer
+requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, kivy_garden.mapview, beem-africa, pyjnius, phonenumbers, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer, googlemaps
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
