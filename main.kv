@@ -510,22 +510,54 @@ ScreenManager:
 
 
     MDScreen:
-        name:"gps"
-        MDBoxLayout:
-            orientation: 'vertical'
-            MDLabel:
-                text: app.gps_location
-            MDLabel:
-                text: app.gps_status
-            MDBoxLayout:
-                size_hint_y: None
-                height: '48dp'
-                padding: '4dp'
-                ToggleButton:
-                    text: 'Start' if self.state == 'normal' else 'Stop'
-                    on_state:
-                        app.start(1000, 0) if self.state == 'down' else \
-                        app.stop()
+        name:"emergency"
+        FloatLayout:
+            Emergency:
+                md_bg_color:221/255, 221/255, 207/255, .7
+                height:dp(30)
+                name:"Car Emergencies"
+                pos_x:.2
+                pos_y:.5
+                call:""
+                pos_hint:{"center_x":.5, "top":.85}
+            Emergency:
+                icon:"gas-station"
+                name:"Fuel"
+                phone:"0715700411"
+                pos_hint:{"center_x":.5, "top":.8}
+            Emergency:
+                name:"Tow Truck"
+                icon:"tow-truck"
+                phone:"0788204327"
+                pos_hint:{"center_x":.5, "top":.7}
+            Emergency:
+                name:"Garage"
+                icon:"tools"
+                phone:"0788204327"
+                pos_hint:{"center_x":.5, "top":.6}
+            Emergency:
+                name:"Speeding"
+                icon:"truck-fast"
+                phone:"0788204327"
+                pos_hint:{"center_x":.5, "top":.5}
+            Emergency:
+                md_bg_color:221/255, 221/255, 207/255, .7
+                height:dp(30)
+                name:"Other!"
+                pos_x:.1
+                pos_y:.5
+                call:""
+                pos_hint:{"center_x":.5, "top":.38}
+            Emergency:
+                icon:"car-emergency"
+                name:"Police"
+                phone:"112"
+                pos_hint:{"center_x":.5, "top":.33}
+            Emergency:
+                name:"Fire"
+                icon:"fire-truck"
+                phone:"114"
+                pos_hint:{"center_x":.5, "top":.23}
 
 
 
