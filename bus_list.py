@@ -89,6 +89,7 @@ class BusLists:
     license = []
     price = []
     seats = []
+    link = ""
 
     def get_city_code(self, city_name):
         for code, name in self.all_cities.items():
@@ -132,3 +133,4 @@ class BusLists:
         BusLists.bus_names = [n.split('\n')[0] for n in names]
         BusLists.routes = [n.split('\n')[1] for n in names]
         BusLists.license = [n.split('\n')[2] for n in names]
+        BusLists.link = url

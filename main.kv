@@ -538,7 +538,7 @@ ScreenManager:
             Emergency:
                 name:"Speeding"
                 icon:"truck-fast"
-                phone:"0788204327"
+                phone:"0714069014"
                 pos_hint:{"center_x":.5, "top":.5}
             Emergency:
                 md_bg_color:221/255, 221/255, 207/255, .7
@@ -668,6 +668,46 @@ ScreenManager:
     size: app.size_x/1, app.size_y/2.5
     focus_behavior: False
     ripple_behavior: False
+<Emergency@MDBoxLayout>:
+    radius:9
+    adaptive_height:True
+    name:""
+    icon:""
+    phone:""
+    call:"phone"
+    pos_x: .27
+    pos_y: .64
+    height:dp(65)
+    md_bg_color:214/255, 223/255, 232/255, 1
+    #pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
+    FloatLayout:
+        MDIcon:
+            icon:root.icon
+            font_size:"40sp"
+            pos_hint:{"center_x":.53,"center_y":.5}
+        MDLabel:
+            id:nm
+            text:root.name
+            halign:"center"
+            font_size:"20sp"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":root.pos_x,"center_y":root.pos_y}
+        MDLabel:
+            text:root.phone
+            halign:"center"
+            font_size:"20sp"
+            font_style:"Caption"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":.27,"center_y":.32}
+        MDIconButton:
+            icon:root.call
+            font_size:"35sp"
+            pos_hint:{"center_x":.9,"center_y":.5}
+            on_release:
+                app.call_emergency(root.phone)
 
 <BusInfo>:
     radius:9
@@ -717,3 +757,5 @@ ScreenManager:
             #font_size: "29sp"
             pos_hint:{'center_x':.2, 'center_y':.19}
             md_bg_color: 26/255, 54/255, 113/255, 1
+            on_release:
+                app.view_page(app.url_bus)

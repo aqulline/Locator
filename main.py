@@ -48,6 +48,7 @@ class MainApp(MDApp):
     counter_bus_stop = 0
     gps_location = StringProperty("")
     gps_status = StringProperty("")
+    url_bus = StringProperty("")
 
     # LOCATION
     city = StringProperty("------------------")
@@ -84,13 +85,12 @@ class MainApp(MDApp):
         self.keyboard_hooker()
         self.plat_check()
 
-
         """
             KEYBOARD HOOKERS
         
         """
 
-    def plat_check(self,):
+    def plat_check(self, ):
         if platform == "android":
             self.gps_init()
             self.start(1000, 0)
@@ -98,7 +98,7 @@ class MainApp(MDApp):
             self.location()
             self.weath()
 
-    def keyboard_hooker(self):
+    def keyboard_hooker(self, *args):
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
 
     def hook_keyboard(self, window, key, *largs):
@@ -111,10 +111,27 @@ class MainApp(MDApp):
             self.screens_size = len(self.screens) - 1
             self.current = self.screens[len(self.screens) - 1]
             self.screen_capture(self.current)
+            self.back_page()
             return True
         elif key == 27 and self.screens_size == 0:
             toast('Press Home button!')
             return True
+
+    def back_page(self):
+
+        if platform == "android":
+            from beem import call as CL
+            print("step 4")
+            if CL.Actions.quit_screens(CL.Actions()):
+                print("step 4.1")
+                Clock.schedule_once(self.quit_screen, 0)
+
+    @mainthread
+    def quit_screen(self, *args):
+        print("step 5")
+        app = MDApp.get_running_app()
+        app.root.switch_screen()
+        print("step 5.1")
 
         """
             WEATHER FUNCTIONS
@@ -126,7 +143,8 @@ class MainApp(MDApp):
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
 
-        self.stop()
+        if platform == "android":
+            self.stop()
 
         """
         BUS STATION LOCATION
@@ -258,6 +276,7 @@ class MainApp(MDApp):
     def add_bus(self):
         names = BL.bus_names
         print(names, "name")
+        self.url_bus = BL.link
         routes = BL.routes
         license = BL.license
         price = BL.price
@@ -287,6 +306,27 @@ class MainApp(MDApp):
                         "seats": f"seats available {seats[pos]}"
                     }
                 )
+
+    def view_page(self, link):
+        from beem import call as CL
+
+        CL.Actions.url = link
+
+        import webbrowser
+        webbrowser.open(link)
+
+
+
+    """
+            EMERGENCY
+    """
+    def call_emergency(self, phone):
+        from beem import call as CL
+
+        CL.call(phone)
+
+
+
 
     """
     
@@ -331,7 +371,7 @@ class MainApp(MDApp):
                 print("callback. Some permissions refused.")
 
         request_permissions([Permission.ACCESS_COARSE_LOCATION,
-                             Permission.ACCESS_FINE_LOCATION], callback)
+                             Permission.ACCESS_FINE_LOCATION, Permission.CALL_PHONE], callback)
 
     def gps_init(self):
         try:
