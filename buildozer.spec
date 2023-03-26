@@ -19,7 +19,7 @@ source.include_exts = py, png, jpg, kv, atlas, json, jpeg, txt, ttf, otf
 #source.include_patterns = assets/*,images/*.png
 
 # (list) Source files to exclude (let empty to not exclude anything)
-#source.exclude_exts = spec
+source.exclude_exts = /cache
 
 # (list) List of directory to exclude (let empty to not exclude anything)
 #source.exclude_dirs = tests, bin, venv

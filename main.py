@@ -1,3 +1,5 @@
+import threading
+
 from kivy.base import EventLoop
 from kivy.properties import NumericProperty, StringProperty, DictProperty, ListProperty
 from kivymd.app import MDApp
@@ -49,6 +51,8 @@ class MainApp(MDApp):
     gps_location = StringProperty("")
     gps_status = StringProperty("")
     url_bus = StringProperty("")
+    thread = None
+    prgres = StringProperty("0")
 
     # LOCATION
     city = StringProperty("------------------")
@@ -82,18 +86,37 @@ class MainApp(MDApp):
     regions = DictProperty(DF.reg_list(DF()))
 
     def on_start(self):
-        self.keyboard_hooker()
-        self.plat_check()
+        """self.keyboard_hooker()
+        self.plat_check()"""
+        Clock.schedule_once(lambda x: self.starta(), .1)
 
         """
             KEYBOARD HOOKERS
         
         """
+    @mainthread
+    def progress_watch(self, value):
+        print(value.value)
+        self.prgres = str(value.value)
+        if value.value == 100:
+            Clock.schedule_once(lambda x: self.screen_capture("home"), .6)
+
+    def starta(self):
+        prg = self.root.ids.prg
+        prg.value = 3
+        self.progress_watch(prg)
+        self.gps_init()
+        self.thread = threading.Thread(target=self.coleer)
+        self.thread.start()
+
+    def coleer(self, *args):
+        self.keyboard_hooker()
+        self.plat_check()
 
     def plat_check(self, ):
         if platform == "android":
-            self.gps_init()
-            self.start(1000, 0)
+            self.location()
+            self.weath()
         else:
             self.location()
             self.weath()
@@ -138,13 +161,20 @@ class MainApp(MDApp):
         """
 
     def weath(self):
+        prg = self.root.ids.prg
+        prg.value = 80
+        self.progress_watch(prg)
         self.weather = WE.current_wth(WE(), self.location_name_from)[0]
         let1, let2 = self.weather[0], self.weather[1]
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
 
-        if platform == "android":
-            self.stop()
+        prg = self.root.ids.prg
+        prg.value = 100
+        self.progress_watch(prg)
+
+        """        if platform == "android":
+            self.stop()"""
 
         """
         BUS STATION LOCATION
@@ -198,6 +228,10 @@ class MainApp(MDApp):
         geolocator = Nominatim(user_agent="geoapiExercises")
 
         location = geolocator.reverse(str(self.lat) + "," + str(self.lon))
+
+        prg = self.root.ids.prg
+        prg.value = 25
+        self.progress_watch(prg)
 
         self.fetch_location()
 
@@ -255,6 +289,10 @@ class MainApp(MDApp):
         self.road = LC.get_spec_add(LC(), "road")
 
         self.address = LC.get_address(LC(), cordinates)["display_name"]
+
+        prg = self.root.ids.prg
+        prg.value = 50
+        self.progress_watch(prg)
 
     def send_txt(self, phone, sms):
 
@@ -372,7 +410,7 @@ class MainApp(MDApp):
 
         request_permissions([Permission.ACCESS_COARSE_LOCATION,
                              Permission.ACCESS_FINE_LOCATION, Permission.CALL_PHONE], callback)
-
+    @mainthread
     def gps_init(self):
         try:
             gps.configure(on_location=self.on_location,
@@ -388,10 +426,11 @@ class MainApp(MDApp):
         if platform == "android":
             print("gps.py: Android detected. Requesting permissions")
             self.request_android_permissions()
-
+    @mainthread
     def start(self, minTime, minDistance):
         gps.start(minTime, minDistance)
 
+    @mainthread
     def stop(self):
         gps.stop()
 
@@ -402,8 +441,7 @@ class MainApp(MDApp):
 
         self.lat = float(kwargs["lat"])
         self.lon = float(kwargs["lon"])
-        self.location()
-        self.weath()
+  
 
     @mainthread
     def on_status(self, stype, status):

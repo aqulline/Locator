@@ -3,6 +3,42 @@ ScreenManager:
     id:manager
     transition:sm.FadeTransition(duration=.0)
     MDScreen:
+        name:"genesis"
+        #radius: [25, 25, 25, 25]
+        md_bg_color:26/255, 54/255, 113/255, 1
+        on_enter:
+            app.starta()
+        FloatLayout:
+            orientation:'vertical'
+            MDLabel:
+                text:'LOCATOR'
+                halign:'center'
+                bold:True
+                size_hint:None, None
+                font_style:'H3'
+                size_hint:1, 5
+                pos_hint:{"center_x":.5, "center_y":.6}
+                font_name:'components/fonts/Gill Sans Bold.otf'
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+            MDProgressBar:
+                id:prg
+                size_hint:.5, None
+                value:0
+                color:242/255, 153/255, 74/255, 1
+                pos_hint: {"center_x":.5,"center_y": .53}
+            MDLabel:
+                text:str(app.prgres) + "%"
+                halign:'center'
+                bold:True
+                size_hint:None, None
+                font_style:'Body1'
+                size_hint:1, 5
+                pos_hint:{"center_x":.5, "center_y":.51}
+                font_name:'components/fonts/Gill Sans Bold.otf'
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+    MDScreen:
         name:"home"
         FloatLayout:
             Deco:
@@ -562,39 +598,7 @@ ScreenManager:
 
 
 
-    MDScreen:
-        name:"genesis"
-        radius: [25, 25, 25, 25]
-        md_bg_color:36/255, 146/255, 255/255, 1
-        MDBoxLayout:
-            orientation:'vertical'
-            MDLabel:
-                text:'LOCATOR'
-                halign:'center'
-                bold:True
-                size_hint:None, None
-                font_style:'H3'
-                size_hint:1, 5
-                font_name:'components/fonts/Gill Sans Bold.otf'
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
-            MDSpinner:
-                id:spine
-                size_hint: None, None
-                size: dp(50), dp(50)
-                pos_hint: {'center_x': .5, 'center_y': 1}
-                active: True
-                color: 1,1,1,1
-            MDLabel:
-                text:'Welcome!'
-                halign:'center'
-                bold:True
-                size_hint:None, None
-                font_style:'H6'
-                size_hint:1, 5
-                font_name:'components/fonts/Gill Sans Bold.otf'
-                theme_text_color: "Custom"
-                text_color: 1, 1, 1, 1
+
 
 
 <DataContainer@MDBoxLayout>:
