@@ -15,3 +15,4 @@ class DatabaseFetch:
 
             return reg
 
+

@@ -124,6 +124,8 @@ ScreenManager:
                     font_name:'components/fonts/Gill Sans.otf'
             Foods:
                 pos_hint:{"center_x":.75, "center_y":.40}
+                on_release:
+                    app.screen_capture("bus_data")
                 Image:
                     source:"components/icons/lock.png"
                     size_hint:None, None
@@ -548,6 +550,36 @@ ScreenManager:
                     on_release:
                         app.zoom = app.zoom - 2
 
+    MDScreen:
+        name:"bus_data"
+        FloatLayout:
+            MDTextField:
+                id:bus_id
+                mode: "rectangle"
+                #fill_color: 0, 0, 0, .4
+                size_hint: .2, .08
+                pos_hint:{'center_x':.4, 'center_y':.92}
+                hint_text:"location"
+                #text_color: 1, 1, 1, 1
+                font_size: dp(20)
+            MDRaisedButton:
+                text:"Search"
+                md_bg_color: 26/255, 54/255, 113/255, 1
+                pos_hint:{"center_y":.91, "center_x":.7}
+                on_release:
+                    app.fetch(bus_id.text)
+            MDSeparator:
+                pos_hint:{"center_y":.85,"center_x":.5}
+                #color:150/255, 111/255, 51/255, 1
+                width:3
+                size_hint:5, None
+            MDBoxLayout:
+                adaptive_height:True
+                height:dp(200)
+                #md_bg_color:26/255, 54/255, 113/255, 1
+                pos_hint:{"center_y":.76,"center_x":.5}
+                id:bus_detail
+
 
     MDScreen:
         name:"emergency"
@@ -676,6 +708,48 @@ ScreenManager:
     size: app.size_x/1, app.size_y/2.5
     focus_behavior: False
     ripple_behavior: False
+
+<Emerge>:
+    radius:9
+    adaptive_height:True
+    name:""
+    icon:""
+    phone:""
+    call:"phone"
+    pos_x: .27
+    pos_y: .64
+    height:dp(65)
+    md_bg_color:214/255, 223/255, 232/255, 1
+    #pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
+    FloatLayout:
+        MDIcon:
+            icon:root.icon
+            font_size:"40sp"
+            pos_hint:{"center_x":.53,"center_y":.5}
+        MDLabel:
+            id:nm
+            text:app.Bname
+            halign:"center"
+            font_size:"20sp"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":root.pos_x,"center_y":root.pos_y}
+        MDLabel:
+            text:app.Bnumber
+            halign:"center"
+            font_size:"20sp"
+            font_style:"Caption"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":.27,"center_y":.32}
+        MDIconButton:
+            icon:app.Bicon
+            font_size:"35sp"
+            pos_hint:{"center_x":.9,"center_y":.5}
+            on_release:
+                app.call_emergency(root.phone)
+
 <Emergency@MDBoxLayout>:
     radius:9
     adaptive_height:True

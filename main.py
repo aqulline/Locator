@@ -2,7 +2,7 @@ import threading
 import time
 
 from kivy.base import EventLoop
-from kivy.properties import NumericProperty, StringProperty, DictProperty, ListProperty
+from kivy.properties import NumericProperty, StringProperty, DictProperty, ListProperty, BooleanProperty
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.bottomsheet import MDListBottomSheet
@@ -19,6 +19,7 @@ from bus_stop import GoogleBusStop as BS
 from wearth import Weather as WE
 from locations import Location as LC
 from bus_list import BusLists as BL
+from fire_base import Fire_Base as FB
 
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -32,6 +33,8 @@ Clock.max_iteration = 250
 if utils.platform != 'android':
     Window.size = (412, 732)
 
+class Emerge(MDBoxLayout):
+    pass
 
 class BusInfo(MDBoxLayout):
     name = StringProperty("")
@@ -63,6 +66,20 @@ class MainApp(MDApp):
     sub_ward = StringProperty("------------------")
     sub_urb = StringProperty("------------------")
     road = StringProperty("------------------")
+
+    # Tracker
+    bus_stop = DictProperty({})
+    detail = DictProperty({})
+    track = DictProperty({})
+    current_pos = DictProperty({})
+        #tracker
+    Bname = StringProperty("")
+    Bnumber = StringProperty("")
+    Bicon = StringProperty("")
+    Bbool = BooleanProperty(False)
+
+
+
 
     # screen
     screens = ['home']
@@ -399,6 +416,40 @@ class MainApp(MDApp):
         bst = self.root.ids.bst
         bst.value = 60
         self.bus_prog = str(bst.value)
+
+    """
+            TRACKING FUNCTIONS
+    
+    """
+
+    def fetch(self, Pnumber):
+
+        if FB.fetch(FB(), Pnumber):
+            self.bus_stop = FB.bus_stop
+            self.detail = FB.detail
+            self.track = FB.track
+            self.current_pos = FB.current_pos
+            layout = self.root.ids.bus_detail
+            bus_layout = Emerge()
+            bus_layout.pos_hint = {"center_x": .5, "center_y": .9}
+            self.Bname = self.detail['car_name']
+            self.Bnumber = self.detail['car_plate_number']
+            self.Bicon = "arrow-right-drop-circle"
+            if not self.Bbool:
+                layout.add_widget(bus_layout)
+                self.Bbool = True
+        else:
+            layout = self.root.ids.bus_detail
+            bus_layout = Emerge()
+            bus_layout.pos_hint = {"center_x": .5, "center_y": .9}
+            self.Bname = "Not available"
+            self.Bnumber = ""
+            self.Bicon = ""
+            if not self.Bbool:
+                layout.add_widget(bus_layout)
+                self.Bbool = True
+
+
 
     """
     
