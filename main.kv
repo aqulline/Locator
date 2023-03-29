@@ -6,8 +6,6 @@ ScreenManager:
         name:"genesis"
         #radius: [25, 25, 25, 25]
         md_bg_color:26/255, 54/255, 113/255, 1
-        on_enter:
-            app.starta()
         FloatLayout:
             orientation:'vertical'
             MDLabel:
@@ -84,7 +82,7 @@ ScreenManager:
                 pos_hint:{"center_x":.25, "center_y":.65}
                 on_release:
                     app.screen_capture("s_location")
-                    app.bus_station()
+                    app.bus_station_caller()
                 Image:
                     source:"components/icons/lock.png"
                     size_hint:None, None
@@ -171,6 +169,7 @@ ScreenManager:
             Deco:
                 md_bg_color:36/255, 146/255, 255/255, 1
                 pos_hint:{"center_x":.5,"center_y":1}
+                radius:0
             MDIcon:
                 icon:"google-maps"
                 pos_hint:{"center_x":.55,"center_y":.9}
@@ -180,6 +179,11 @@ ScreenManager:
                 halign:"center"
                 font_name:'components/fonts/Gill Sans.otf'
                 pos_hint:{"center_x":.3,"center_y":.9}
+            MDProgressBar:
+                id:bst
+                value:3
+                color:242/255, 153/255, 74/255, 1
+                pos_hint: {"center_x":.5,"center_y": .8}
 
             RecycleView:
                 id: customer

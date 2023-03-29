@@ -1,4 +1,5 @@
 import threading
+import time
 
 from kivy.base import EventLoop
 from kivy.properties import NumericProperty, StringProperty, DictProperty, ListProperty
@@ -53,6 +54,7 @@ class MainApp(MDApp):
     url_bus = StringProperty("")
     thread = None
     prgres = StringProperty("0")
+    bus_prog = StringProperty("0")
 
     # LOCATION
     city = StringProperty("------------------")
@@ -94,6 +96,7 @@ class MainApp(MDApp):
             KEYBOARD HOOKERS
         
         """
+
     @mainthread
     def progress_watch(self, value):
         print(value.value)
@@ -201,11 +204,14 @@ class MainApp(MDApp):
                     "id": cor[pos]
                 }
             )
+        bst = self.root.ids.bst
+        bst.value = 100
 
-    def bus_station(self):
+    def bus_station(self, *args):
         if self.counter_bus_stop == 0:
-            BS.GetBusStop(BS(), self.address)
-
+            bst = self.root.ids.bst
+            bst.value = 65
+            time.sleep(2)
             cor = BS.cord_stop
             station_name = BS.name_stop
 
@@ -219,6 +225,9 @@ class MainApp(MDApp):
                 map.add_widget(mark)
                 map.center_on(float(lat), float(lon))
                 self.zoom = 10
+            bst = self.root.ids.bst
+            bst.value = 76
+            time.sleep(2)
             self.add_item()
             self.counter_bus_stop = 1
 
@@ -353,18 +362,43 @@ class MainApp(MDApp):
         import webbrowser
         webbrowser.open(link)
 
-
-
     """
             EMERGENCY
     """
+
     def call_emergency(self, phone):
         from beem import call as CL
 
-        CL.call(phone)
+        CL.Actions.call(CL.Actions(), phone)
 
+    """"
+            OPTIMIZATIONS FUNCTIONS
+    """
 
+    def bus_monitor(self, *args):
+        print("caled")
+        if self.bus_prog == "60":
+            self.bus_station()
+            Clock.unschedule(self.bus_monitor)
 
+    def bus_station_caller(self):
+        if self.counter_bus_stop == 0:
+            Clock.schedule_interval(self.bus_monitor, .1)
+            bst = self.root.ids.bst
+            bst.value = 10
+            self.bus_prog = str(bst.value)
+            Clock.schedule_once(lambda x: self.bus(), .1)
+
+    def bus(self):
+        bst = self.root.ids.bst
+        bst.value = 29
+        self.bus_prog = str(bst.value)
+        self.thread = threading.Thread(target=BS.GetBusStop, args=(BS(), self.address))
+        self.thread.start()
+        self.thread.join()
+        bst = self.root.ids.bst
+        bst.value = 60
+        self.bus_prog = str(bst.value)
 
     """
     
@@ -410,6 +444,7 @@ class MainApp(MDApp):
 
         request_permissions([Permission.ACCESS_COARSE_LOCATION,
                              Permission.ACCESS_FINE_LOCATION, Permission.CALL_PHONE], callback)
+
     @mainthread
     def gps_init(self):
         try:
@@ -426,6 +461,7 @@ class MainApp(MDApp):
         if platform == "android":
             print("gps.py: Android detected. Requesting permissions")
             self.request_android_permissions()
+
     @mainthread
     def start(self, minTime, minDistance):
         gps.start(minTime, minDistance)
@@ -441,7 +477,6 @@ class MainApp(MDApp):
 
         self.lat = float(kwargs["lat"])
         self.lon = float(kwargs["lon"])
-  
 
     @mainthread
     def on_status(self, stype, status):
