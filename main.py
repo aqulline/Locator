@@ -10,6 +10,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
 from kivy.clock import mainthread
+from kivymd.uix.tab import MDTabsBase
 from plyer import gps
 from kivy.utils import platform
 
@@ -33,8 +34,14 @@ Clock.max_iteration = 250
 if utils.platform != 'android':
     Window.size = (412, 732)
 
+
+class Tab(MDBoxLayout, MDTabsBase):
+    pass
+
+
 class Emerge(MDBoxLayout):
     pass
+
 
 class BusInfo(MDBoxLayout):
     name = StringProperty("")
@@ -72,14 +79,17 @@ class MainApp(MDApp):
     detail = DictProperty({})
     track = DictProperty({})
     current_pos = DictProperty({})
-        #tracker
+
+    # tracker
+    user_phone = StringProperty("")
+    user_track_location = StringProperty("")
     Bname = StringProperty("")
     Bnumber = StringProperty("")
     Bicon = StringProperty("")
     Bbool = BooleanProperty(False)
-
-
-
+    bus_current_loc = StringProperty("")
+    bus_prev_loc = StringProperty("")
+    bus_lat, bus_lon = NumericProperty(0), NumericProperty(0)
 
     # screen
     screens = ['home']
@@ -434,6 +444,8 @@ class MainApp(MDApp):
             bus_layout.pos_hint = {"center_x": .5, "center_y": .9}
             self.Bname = self.detail['car_name']
             self.Bnumber = self.detail['car_plate_number']
+            self.bus_current_loc, self.bus_prev_loc = self.current_pos["current"], self.current_pos["prev"]
+            self.bus_lat, self.bus_lon = self.track["lat"], self.track["lon"]
             self.Bicon = "arrow-right-drop-circle"
             if not self.Bbool:
                 layout.add_widget(bus_layout)
@@ -449,7 +461,35 @@ class MainApp(MDApp):
                 layout.add_widget(bus_layout)
                 self.Bbool = True
 
+    def bus_tracker_stop(self):
 
+        Clock.schedule_once(self.bus_tracker_stop_callable, .1)
+
+    def bus_tracker_stop_callable(self, *args):
+        data = self.bus_stop
+        for i, y in data.items():
+            self.root.ids.tracker_stops.data.append(
+                {
+                    "viewclass": "Stops",
+                    "name": i,
+                    "icon": y,
+                    "phone": "",
+                    "fsize": "16",
+                    "pos_x": .27,
+                    "pos_y": .5,
+                    "isize": "30sp",
+                    "call": "android-messages",
+                }
+            )
+
+    @mainthread
+    def sms_schedule(self, phone):
+        user_phone = SM.phone_repr(phone)
+        print(user_phone)
+        if user_phone:
+            FB.notifier(FB(), self.Bnumber, self.user_track_location, user_phone)
+        else:
+            toast("check your phone number!")
 
     """
     

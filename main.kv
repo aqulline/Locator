@@ -580,6 +580,161 @@ ScreenManager:
                 pos_hint:{"center_y":.76,"center_x":.5}
                 id:bus_detail
 
+    MDScreen:
+        name:"bus_tracker"
+        on_enter:
+            app.bus_tracker_stop()
+        MDBoxLayout:
+            orientation: "vertical"
+            MDToolbar:
+                title: "Location Manager"
+                specific_text_color:78/255, 82/255, 84/255, 1
+                md_bg_color:1, 1, 1, 1
+            MDTabs:
+                allow_stretch:False
+                background_color:1, 1, 1, 1
+                indicator_color:36/255, 146/255, 255/255, 1
+                tab_hint_x:True
+                text_color_active:78/255, 82/255, 84/255, 1
+                text_color_normal:.5, .5, .5, 1
+
+                Tab:
+                    title: "bus detail"
+                    FloatLayout:
+                        MDLabel:
+                            halign:"left"
+                            text:app.Bname
+                            theme_text_color:"Custom"
+                            #text_color:1,1,1,1
+                            padding: dp(20), dp(0)
+                            font_size:"21sp"
+                            pos_hint:{"center_y":.93}
+                        MDLabel:
+                            halign:"center"
+                            text:app.Bnumber
+                            theme_text_color:"Custom"
+                            #text_color:1,1,1,1
+                            font_style:"H6"
+                            pos_hint:{"center_x":.16, "center_y":.88}
+
+                        MDBoxLayout:
+                            pos_hint:{"center_x":.5, "center_y":.68}
+                            orientation:"vertical"
+                            height:142
+                            adaptive_height:True
+                            md_bg_color:214/255, 223/255, 232/255, 1
+                            radius:8
+                        MDIcon:
+                            halign:"center"
+                            pos_hint:{"center_x":.1, "center_y":.75}
+                            icon:"map-marker-check"
+                            font_size:"43sp"
+                            theme_text_color:"Custom"
+                            text_color: 128/255, 128/255, 128/255, 1
+                        MDSeparator:
+                            pos_hint:{"center_y":.68,"center_x":.1}
+                            orientation:"vertical"
+                            #color:150/255, 111/255, 51/255, 1
+                            width:3
+                            size_hint:None, .05
+                        MDIcon:
+                            halign:"center"
+                            pos_hint:{"center_x":.1, "center_y":.61}
+                            icon:"map-marker-radius"
+                            font_size:"43sp"
+                            theme_text_color:"Custom"
+                            text_color: 0, 150/255, 0, 1
+                        MDLabel:
+                            halign:"left"
+                            text:app.bus_prev_loc
+                            theme_text_color:"Custom"
+                            #text_color:1,1,1,1
+                            padding: dp(70), dp(0)
+                            font_size:"21sp"
+                            pos_hint:{"center_y":.75}
+                            theme_text_color: "Custom"
+                            text_color:26/255, 54/255, 113/255
+                        MDLabel:
+                            halign:"left"
+                            text:app.bus_current_loc
+                            theme_text_color:"Custom"
+                            #text_color:1,1,1,1
+                            padding: dp(70), dp(0)
+                            font_size:"21sp"
+                            pos_hint:{"center_y":.61}
+                            theme_text_color: "Custom"
+                            text_color:26/255, 54/255, 113/255
+                        MDIconButton:
+                            icon:"map-marker"
+                            pos_hint:{"center_x":.6,"center_y":.47}
+                            user_font_size:"30sp"
+                            md_bg_color: .35, .35, .35, 1
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                        MDIconButton:
+                            icon:"clipboard-text-outline"
+                            pos_hint:{"center_x":.4,"center_y":.47}
+                            user_font_size:"30sp"
+                            md_bg_color: .35, .35, .35, 1
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+
+
+                Tab:
+                    title:"bus stops"
+                    FloatLayout:
+                        RecycleView:
+                            id: tracker_stops
+                            key_viewclass: 'viewclass'
+                            key_size: 'height'
+                            pos_hint:{"center_x":.5,"top":.97}
+                            RecycleBoxLayout:
+                                id:wali
+                                spacing:dp(10)
+                                padding: dp(10)
+                                default_size: None, dp(55)
+                                default_size_hint: 1, None
+                                size_hint_y: None
+                                height: self.minimum_height
+                                orientation: 'vertical'
+
+
+    MDScreen:
+        name:"sms_stop"
+        FloatLayout:
+            MDTextField:
+                mode: "rectangle"
+                id:user_phone
+                #fill_color: 0, 0, 0, .4
+                size_hint: .6, .1
+                pos_hint:{'center_x':.5, 'center_y':.8}
+                hint_text:"Share, phone number"
+                #text_color: 1, 1, 1, 1
+                font_size: dp(25)
+            Deco:
+                pos_hint:{"center_x":.5,"center_y":.6}
+                md_bg_color: .35, .35, .35, 1
+                elevation: 7
+                size: app.size_x/1.2, app.size_y/7
+                MDLabel:
+                    id:name_stop
+                    text:"You will be notified when the bus reaches" + " " + app.user_track_location
+                    halign:"center"
+                    font_size: "20sp"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    pos_hint:{"center_x":.5,"center_y":.5}
+
+            MDRaisedButton:
+                text: "Schedule"
+                pos_hint:{'center_x': .5, 'center_y': .45}
+                font_size: "18sp"
+                md_bg_color: 36/255, 146/255, 255/255, 1
+                on_release:
+                    app.sms_schedule(user_phone.text)
+
+
 
     MDScreen:
         name:"emergency"
@@ -709,6 +864,49 @@ ScreenManager:
     focus_behavior: False
     ripple_behavior: False
 
+<Stops@MDBoxLayout>:
+    radius:9
+    adaptive_height:True
+    name:""
+    icon:""
+    phone:""
+    call:"phone"
+    pos_x: .27
+    pos_y: .64
+    height:dp(65)
+    md_bg_color:214/255, 223/255, 232/255, 1
+    #pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
+    FloatLayout:
+        MDIcon:
+            icon:root.icon
+            font_size:"40sp"
+            pos_hint:{"center_x":.53,"center_y":.5}
+        MDLabel:
+            id:nm
+            text:root.name
+            halign:"left"
+            font_size:"20sp"
+            padding: 70, 0
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_y":root.pos_y}
+        MDLabel:
+            text:root.phone
+            halign:"center"
+            font_size:"20sp"
+            font_style:"Caption"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255
+            pos_hint:{"center_x":.27,"center_y":.32}
+        MDIconButton:
+            icon:root.call
+            font_size:"35sp"
+            pos_hint:{"center_x":.9,"center_y":.5}
+            on_release:
+                app.user_track_location = root.name
+                app.screen_capture("sms_stop")
+
 <Emerge>:
     radius:9
     adaptive_height:True
@@ -748,7 +946,7 @@ ScreenManager:
             font_size:"35sp"
             pos_hint:{"center_x":.9,"center_y":.5}
             on_release:
-                app.call_emergency(root.phone)
+                app.screen_capture("bus_tracker")
 
 <Emergency@MDBoxLayout>:
     radius:9

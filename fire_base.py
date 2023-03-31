@@ -33,4 +33,16 @@ class Fire_Base:
 
             return False
 
-
+    def notifier(self, phone, location, user_phone):
+        if True:
+            import firebase_admin
+            firebase_admin._apps.clear()
+            from firebase_admin import credentials, initialize_app, db
+            if not firebase_admin._apps:
+                cred = credentials.Certificate("credential/farmzon-abdcb-c4c57249e43b.json")
+                initialize_app(cred, {'databaseURL': 'https://farmzon-abdcb.firebaseio.com/'})
+                ref = db.reference('LocatorDriver').child("BusId").child(phone).child("Notifier").child(location).child(
+                    user_phone)
+                ref.set({
+                    "phone": user_phone,
+                })
