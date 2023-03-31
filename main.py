@@ -11,7 +11,7 @@ from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
 from kivy.clock import mainthread
 from kivymd.uix.tab import MDTabsBase
-from plyer import gps
+from plyer import gps, notification
 from kivy.utils import platform
 
 from beem import sms as SM
@@ -113,6 +113,14 @@ class MainApp(MDApp):
     w_icon2 = StringProperty("")
     location_name_to = StringProperty("Select Location")
     location_name_from = StringProperty("")
+
+    # Stranger Location
+    Scity = StringProperty("------------------")
+    Sregion = StringProperty("------------------")
+    S_city_district = StringProperty("------------------")
+    S_sub_ward = StringProperty("------------------")
+    S_sub_urb = StringProperty("------------------")
+    Sroad = StringProperty("------------------")
 
     # loc
     cordinates = ListProperty([lat, lon])
@@ -522,6 +530,113 @@ class MainApp(MDApp):
             toast("check your phone number!")
 
     """
+        SELF TRACKING
+    """
+
+    track_sensor = 0
+
+    user_gen_id = StringProperty("")
+
+    def start_track(self):
+        if self.track_sensor == 0:
+            self.user_gen_id = FB.id_generator(FB())
+            btn_id = self.root.ids.id_view
+
+            btn_id.text = self.user_gen_id
+            btn_id.pos_hint = {"center_x": .5, "center_y": .8}
+            self.start()
+            self.track_sensor = 1
+        else:
+            self.stop()
+            self.track_sensor = 0
+
+    def self_location(self):
+
+        cordinates = [self.lat, self.lon]
+        LC.save_data(LC(), cordinates)
+        FB.track_loc(FB(), self.user_gen_id, self.lat, self.lon)
+
+        self.city = LC.get_spec_add(LC(), "city")
+
+        self.region = LC.get_spec_add(LC(), "region")
+
+        self.city_district = LC.get_spec_add(LC(), "city_district")
+
+        self.sub_ward = LC.get_spec_add(LC(), "subward")
+
+        self.sub_urb = LC.get_spec_add(LC(), "suburb")
+
+        self.road = LC.get_spec_add(LC(), "road")
+
+    stranger_lat, stranger_lon = NumericProperty(0), NumericProperty(0)
+    strange_loc = StringProperty("")
+    stranger_sensor = 0
+    stranger_idd = StringProperty("")
+
+    def stranger_track(self, id, instance):
+
+        if self.stranger_sensor == 0:
+            self.stranger_sensor = 1
+            if id != "":
+                strange_loc = FB.get_loc(FB(), id)
+
+                if strange_loc:
+                    self.stranger_idd = id
+                    self.notifi(self.stranger_idd)
+                    self.stranger_lat = strange_loc["lat"]
+                    self.stranger_lon = strange_loc["lon"]
+                    instance.text_color = 0, 150 / 255, 0, 1
+                    instance.icon = "map-marker-circle"
+                else:
+                    toast("no id found")
+        else:
+            toast("stopped tracking")
+            self.my_stream.close()
+            instance.text_color = .5, .5, .5, 1
+            instance.icon = "map-marker-off"
+
+    def stranger_location(self):
+        strange_loc = FB.get_loc(FB(), self.stranger_idd)
+        self.stranger_lat = strange_loc["lat"]
+        self.stranger_lon = strange_loc["lon"]
+
+        cordinates = [self.stranger_lat, self.stranger_lon]
+        LC.save_data(LC(), cordinates)
+
+        self.Scity = LC.get_spec_add(LC(), "city")
+
+        self.Sregion = LC.get_spec_add(LC(), "region")
+
+        self.S_city_district = LC.get_spec_add(LC(), "city_district")
+
+        self.S_sub_ward = LC.get_spec_add(LC(), "subward")
+
+        self.S_sub_urb = LC.get_spec_add(LC(), "suburb")
+
+        self.Sroad = LC.get_spec_add(LC(), "road")
+
+    my_stream = None
+
+    def stream_handler(self, message):
+        if True:
+            print("hello")
+            self.stranger_location()
+            return notification.notify(title='Location Changed', message='location on move')
+
+    def notifi(self, idd):
+        try:
+            import firebase_admin
+            firebase_admin._apps.clear()
+            from firebase_admin import credentials, initialize_app, db
+            cred = credentials.Certificate("credential/farmzon-abdcb-c4c57249e43b.json")
+            initialize_app(cred, {'databaseURL': 'https://farmzon-abdcb.firebaseio.com/'})
+            self.my_stream = db.reference('LocatorDriver').child("Self_track").child(idd).listen(
+                self.stream_handler)
+
+        except:
+            print("you did good!")
+
+    """
     
         screen functions
     
@@ -584,7 +699,7 @@ class MainApp(MDApp):
             self.request_android_permissions()
 
     @mainthread
-    def start(self, minTime, minDistance):
+    def start(self, minTime=1000, minDistance=10):
         gps.start(minTime, minDistance)
 
     @mainthread
@@ -598,6 +713,7 @@ class MainApp(MDApp):
 
         self.lat = float(kwargs["lat"])
         self.lon = float(kwargs["lon"])
+        self.self_location()
 
     @mainthread
     def on_status(self, stype, status):

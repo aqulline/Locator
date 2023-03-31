@@ -1,17 +1,18 @@
 [app]
 
 # (str) Title of your application
-title = LocatorDriver
+title = Locator
 
 # (str) Package name
-package.name = LocatorDriver
+package.name = Locator
 #Locator
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = com.alpha
 
 # (str) Source code where the main.py live
-source.dir = /home/alpha/PycharmProjects/LocatorDrivrer
+source.dir = .
+#/home/alpha/PycharmProjects/LocatorDrivrer
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py, png, jpg, kv, atlas, json, jpeg, txt, ttf, otf
@@ -23,7 +24,7 @@ source.include_exts = py, png, jpg, kv, atlas, json, jpeg, txt, ttf, otf
 #source.exclude_exts = /cache
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-#source.exclude_dirs = tests, bin, venv
+source.exclude_dirs = tests, bin, venv, cache
 
 # (list) List of exclusions using pattern matching
 # Do not prefix with './'
@@ -38,7 +39,9 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer, googlemaps, firebase-admin, google-auth, google-api-python-client, google-api-core
+requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, kivy_garden.mapview, beem-africa, pyjnius, phonenumbers, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer, googlemaps, firebase-admin, google-auth, google-api-python-client, google-api-core
+
+#"driver" python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer, googlemaps, firebase-admin, google-auth, google-api-python-client, google-api-core
 #python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, kivy_garden.mapview, beem-africa, pyjnius, phonenumbers, requests, openssl, urllib3, httplib2==0.18.1, geocoder, geopy, beautifulsoup4, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing==2.4.7, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, oauth2client, python_jwt, jwcrypto, pytz, ratelim, decorator, click, future, plyer, googlemaps
 
 # (str) Custom source folders for requirements
