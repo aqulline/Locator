@@ -80,7 +80,7 @@ class MainApp(MDApp):
     track = DictProperty({})
     current_pos = DictProperty({})
 
-    # tracker
+    # Tracker.tracker
     user_phone = StringProperty("")
     user_track_location = StringProperty("")
     Bname = StringProperty("")
@@ -90,6 +90,14 @@ class MainApp(MDApp):
     bus_current_loc = StringProperty("")
     bus_prev_loc = StringProperty("")
     bus_lat, bus_lon = NumericProperty(0), NumericProperty(0)
+
+    # Tracker.location
+    Bcity = StringProperty("")
+    Bregion = StringProperty("")
+    B_city_district = StringProperty("")
+    B_sub_ward = StringProperty("")
+    B_sub_urb = StringProperty("")
+    Broad = StringProperty("")
 
     # screen
     screens = ['home']
@@ -465,22 +473,44 @@ class MainApp(MDApp):
 
         Clock.schedule_once(self.bus_tracker_stop_callable, .1)
 
+    tracker_sensor = 0
+
     def bus_tracker_stop_callable(self, *args):
         data = self.bus_stop
-        for i, y in data.items():
-            self.root.ids.tracker_stops.data.append(
-                {
-                    "viewclass": "Stops",
-                    "name": i,
-                    "icon": y,
-                    "phone": "",
-                    "fsize": "16",
-                    "pos_x": .27,
-                    "pos_y": .5,
-                    "isize": "30sp",
-                    "call": "android-messages",
-                }
-            )
+        if self.tracker_sensor == 0:
+            self.tracker_sensor = 1
+            for i, y in data.items():
+                self.root.ids.tracker_stops.data.append(
+                    {
+                        "viewclass": "Stops",
+                        "name": i,
+                        "icon": y,
+                        "phone": "",
+                        "fsize": "16",
+                        "pos_x": .27,
+                        "pos_y": .5,
+                        "isize": "30sp",
+                        "call": "android-messages",
+                    }
+                )
+            self.Bfetch_location()
+
+    def Bfetch_location(self):
+
+        cordinates = [self.bus_lat, self.bus_lon]
+        LC.save_data(LC(), cordinates)
+
+        self.Bcity = LC.get_spec_add(LC(), "city")
+
+        self.Bregion = LC.get_spec_add(LC(), "region")
+
+        self.B_city_district = LC.get_spec_add(LC(), "city_district")
+
+        self.B_sub_ward = LC.get_spec_add(LC(), "subward")
+
+        self.B_sub_urb = LC.get_spec_add(LC(), "suburb")
+
+        self.Broad = LC.get_spec_add(LC(), "road")
 
     @mainthread
     def sms_schedule(self, phone):
