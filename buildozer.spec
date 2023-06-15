@@ -1,18 +1,19 @@
 [app]
 
 # (str) Title of your application
-title = Locator
+title = Tour
 
 # (str) Package name
-package.name = Locator
+package.name = Tour
 #Locator
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = com.alpha
 
 # (str) Source code where the main.py live
-source.dir = .
-#/home/alpha/PycharmProjects/LocatorDrivrer
+source.dir = /home/alpha/PycharmProject/TourG
+
+#/home/alpha/PycharmProjects/ShellyFinder
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py, png, jpg, kv, atlas, json, jpeg, txt, ttf, otf
@@ -78,7 +79,7 @@ osx.kivy_version = 1.9.1
 #
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 1
+fullscreen = 0
 
 # (string) Presplash background color (for android toolchain)
 # Supported formats are: #RRGGBB #AARRGGBB or one of the following names:

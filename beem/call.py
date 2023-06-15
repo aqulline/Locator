@@ -26,7 +26,13 @@ class Actions:
         WebViewClient = autoclass('android.webkit.WebViewClient')
         activity = autoclass('org.kivy.android.PythonActivity').mActivity
         Actions.webview = WebView(activity)
-        Actions.webview.getSettings().setJavaScriptEnabled(True)
+        settings = Actions.webview.getSettings()
+        settings.setJavaScriptEnabled(True)
+        settings.setUseWideViewPort(True)
+        settings.setLoadWithOverviewMode(True)
+        settings.setSupportZoom(True)
+        settings.setBuiltInZoomControls(True)
+
         wvc = WebViewClient();
         Actions.webview.setWebViewClient(wvc);
         activity.setContentView(Actions.webview)

@@ -1,38 +1,25 @@
 import requests
-from bs4 import BeautifulSoup
-
-
 
 
 class Weather:
     city = "Dar es salaam"
 
-    def current_wth(self, city):
-        url = "https://www.google.com/search?q="+"weather"+city
-        html = requests.get(url).content
+    def get_weather(self, location):
+        api_key = "18ae72529c924ea34141ce37862480d4"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}"
 
+        response = requests.get(url)
+        data = response.json()
 
-        soup = BeautifulSoup(html, 'html.parser')
-        temp = soup.find('div', attrs={'class': 'BNeawe iBp4i AP7Wnd'}).text
-        str = soup.find('div', attrs={'class': 'BNeawe tAd8D AP7Wnd'}).text
+        if response.status_code == 200:
+            weather = data['main']['temp']
 
+            data = self.kelvin_to_celsius(weather)
 
-        data = str.split('\n')
-        time = data[0]
-        sky = data[1]
+            return str(data)
+        else:
+            return "Weather data not found"
 
-
-        listdiv = soup.findAll('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'})
-        strd = listdiv[5].text
-
-
-        pos = strd.find('Wind')
-        other_data = strd[pos:]
-
-
-        print("Temperature is", temp)
-        print("Time: ", time)
-        print("Sky Description: ", sky)
-        print(other_data)
-
-        return [temp, time]
+    def kelvin_to_celsius(self, kelvin):
+        celsius = kelvin - 273.15
+        return int(celsius)

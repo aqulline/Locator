@@ -26,6 +26,7 @@ class Fire_Base:
 
     def fetch(self, number):
         data = self.get_bus_id(number)
+        print("data=", data)
         if data:
             Fire_Base.bus_stop = data['BusStops']
             Fire_Base.track = data['Tracker']

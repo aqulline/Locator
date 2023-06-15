@@ -62,7 +62,7 @@ class GoogleBusStop:
 
     def GetBusStop(self, address):
 
-        #address = address  # 'Gamex, Makutano Road, Jitegemee, Mabibo, Ubungo Municipal, Dar es Salaam, Coastal Zone, 21493, Tanzania'
+        # address = address  # 'Gamex, Makutano Road, Jitegemee, Mabibo, Ubungo Municipal, Dar es Salaam, Coastal Zone, 21493, Tanzania'
         geocode = self.map_client.geocode(address=address)
         (lat, lng) = map(geocode[0]['geometry']['location'].get, ('lat', 'lng'))
 

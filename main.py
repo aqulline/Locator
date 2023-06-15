@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import time
 
@@ -210,7 +211,7 @@ class MainApp(MDApp):
         prg = self.root.ids.prg
         prg.value = 80
         self.progress_watch(prg)
-        self.weather = WE.current_wth(WE(), self.location_name_from)[0]
+        self.weather = WE.get_weather(WE(), self.city)
         let1, let2 = self.weather[0], self.weather[1]
         self.w_icon1 = f"numeric-{let1}"
         self.w_icon2 = f"numeric-{let2}"
@@ -478,7 +479,6 @@ class MainApp(MDApp):
                 self.Bbool = True
 
     def bus_tracker_stop(self):
-
         Clock.schedule_once(self.bus_tracker_stop_callable, .1)
 
     tracker_sensor = 0
